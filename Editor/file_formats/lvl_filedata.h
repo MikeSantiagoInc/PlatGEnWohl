@@ -94,6 +94,7 @@ struct LevelNPC
     int direct;
     unsigned long id;
     long special_data;
+    long special_data2;
     bool generator;
     int generator_direct;
     int generator_type;
@@ -252,6 +253,7 @@ struct LevelData
     int CurSection;
     bool playmusic;
     bool modified;
+    bool untitled;
     QString filename;
     QString path;
 };

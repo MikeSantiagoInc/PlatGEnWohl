@@ -26,8 +26,6 @@
 
 #include <QGraphicsSceneMouseEvent>
 
-#include <QGraphicsItemAnimation>
-
 #include <QKeyEvent>
 #include <QBitmap>
 #include <QPainter>
@@ -36,6 +34,7 @@
 #include <QtCore>
 #include <QDebug>
 
+#include "../common_features/simple_animator.h"
 
 #include "../file_formats/lvl_filedata.h"
 #include "../file_formats/npc_filedata.h"
@@ -46,12 +45,7 @@
 #include "resizer/item_resizer.h"
 
 #include "../data_configs/custom_data.h"
-
-struct LevelEditingSettings
-{
-    bool animationEnabled;
-    bool collisionsEnabled;
-};
+#include "../main_window/global_settings.h"
 
 class LvlScene : public QGraphicsScene
 {
@@ -130,6 +124,7 @@ public:
     void ChangeSectionBG(int BG_Id, int SectionID=-1);
     void DrawBG(int x, int y, int w, int h, int sctID, QPixmap &srcimg, QPixmap &srcimg2, obj_BG &bgsetup);
 
+    void buildAnimators();
     void loadUserData(QProgressDialog &progress);
 
     void setBlocks(QProgressDialog &progress);
@@ -147,6 +142,7 @@ public:
 
     void startBlockAnimation();
     void stopAnimation();
+    void hideWarpsAndDoors(bool visible);
 
     void setLocked(int type, bool lock);
 
@@ -159,6 +155,9 @@ public:
     QVector<UserBGOs > uBGOs;
     QVector<UserBlocks > uBlocks;
     QVector<UserNPCs > uNPCs;
+
+    QVector<SimpleAnimator * > animates_BGO;
+    QVector<SimpleAnimator * > animates_Blocks;
 
     QGraphicsItem * itemCollidesWith(QGraphicsItem * item);
 
@@ -203,6 +202,7 @@ public:
     void setSectionResizer(bool enabled, bool accept=false);
     void setEventSctSizeResizer(long event, bool enabled, bool accept=false);
     void setBlockResizer(QGraphicsItem *targetBlock, bool enabled, bool accept=false);
+    void setPhysEnvResizer(QGraphicsItem * targetRect, bool enabled, bool accept=false);
 
     // ////////////HistoryManager///////////////////
     struct HistoryOperation{

@@ -40,22 +40,31 @@ void LvlScene::startBlockAnimation()
         return;
     }
 
+    foreach(SimpleAnimator * bgoA, animates_BGO)
+    {
+        bgoA->start();
+    }
+    foreach(SimpleAnimator * blockA, animates_Blocks)
+    {
+        blockA->start();
+    }
+
     QList<QGraphicsItem*> ItemList = items();
     QGraphicsItem *tmp;
     for (QList<QGraphicsItem*>::iterator it = ItemList.begin(); it != ItemList.end(); it++)
     {
-        if(((*it)->data(0)=="Block")&&((*it)->data(4)=="animated"))
-        {
-            tmp = (*it);
-            ((ItemBlock *)tmp)->AnimationStart();
-        }
-        else
-        if(((*it)->data(0)=="BGO")&&((*it)->data(4)=="animated"))
-        {
-            tmp = (*it);
-            ((ItemBGO *)tmp)->AnimationStart();
-        }
-        else
+//        if(((*it)->data(0)=="Block")&&((*it)->data(4)=="animated"))
+//        {
+//            tmp = (*it);
+//            ((ItemBlock *)tmp)->AnimationStart();
+//        }
+//        else
+//        if(((*it)->data(0)=="BGO")&&((*it)->data(4)=="animated"))
+//        {
+//            tmp = (*it);
+//            ((ItemBGO *)tmp)->AnimationStart();
+//        }
+//        else
         if(((*it)->data(0)=="NPC")&&((*it)->data(4)=="animated"))
         {
             tmp = (*it);
@@ -67,22 +76,31 @@ void LvlScene::startBlockAnimation()
 
 void LvlScene::stopAnimation()
 {
+    foreach(SimpleAnimator * bgoA, animates_BGO)
+    {
+        bgoA->stop();
+    }
+    foreach(SimpleAnimator * blockA, animates_Blocks)
+    {
+        blockA->stop();
+    }
+
     QList<QGraphicsItem*> ItemList = items();
     QGraphicsItem *tmp;
     for (QList<QGraphicsItem*>::iterator it = ItemList.begin(); it != ItemList.end(); it++)
     {
-        if(((*it)->data(0)=="Block")&&((*it)->data(4)=="animated"))
-        {
-            tmp = (*it);
-            ((ItemBlock *)tmp)->AnimationStop();
-        }
-        else
-        if(((*it)->data(0)=="BGO")&&((*it)->data(4)=="animated"))
-        {
-            tmp = (*it);
-            ((ItemBGO *)tmp)->AnimationStop();
-        }
-        else
+//        if(((*it)->data(0)=="Block")&&((*it)->data(4)=="animated"))
+//        {
+//            tmp = (*it);
+//            ((ItemBlock *)tmp)->AnimationStop();
+//        }
+//        else
+//        if(((*it)->data(0)=="BGO")&&((*it)->data(4)=="animated"))
+//        {
+//            tmp = (*it);
+//            ((ItemBGO *)tmp)->AnimationStop();
+//        }
+//        else
         if(((*it)->data(0)=="NPC")&&((*it)->data(4)=="animated"))
         {
             tmp = (*it);
@@ -90,6 +108,23 @@ void LvlScene::stopAnimation()
         }
     }
 
+    update();
+}
+
+void LvlScene::hideWarpsAndDoors(bool visible)
+{
+    QMap<QString, LevelLayers> localLayers;
+    for(int i = 0; i < LvlData->layers.size(); ++i){
+        localLayers[LvlData->layers[i].name] = LvlData->layers[i];
+    }
+
+    foreach (QGraphicsItem* i, items()) {
+        if(i->data(0).toString()=="Water"){
+            i->setVisible(!localLayers[((ItemWater*)i)->waterData.layer].hidden && visible);
+        }else if(i->data(0).toString()=="Door_exit" || i->data(0).toString()=="Door_enter"){
+            i->setVisible(!localLayers[((ItemDoor*)i)->doorData.layer].hidden && visible);
+        }
+    }
 }
 
 void LvlScene::applyLayersVisible()
